@@ -5,10 +5,10 @@ import time
 
 # 下载路径，默认为该文件所在路径
 downloadPath = os.path.abspath(os.path.dirname(__file__))
-downloadPath += os.path.sep + time.strftime("%Y%m%d_%H%M%S", time.localtime())
+downloadPath += os.path.sep + time.strftime("%Y%m%d", time.localtime())
 
 # 需要爬取的图片的 tag
-tag = ""
+tag = "sayori"
 
 def getPicURL(url):
     """
@@ -21,9 +21,14 @@ def getPicURL(url):
         pattern = re.compile(r'<a id="image-resize-link" href="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
         picURL = str(pattern.search(response.text).group(0)).replace('<a id="image-resize-link" href="','')
     except AttributeError:
-        # 部分图片体积不大，没有预览图，当前页面即为原图
-        pattern = re.compile(r'src="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
-        picURL = str(pattern.search(response.text).group(0)).replace('src="','')
+        try:
+            # 部分图片体积不大，没有预览图，当前页面即为原图
+            pattern = re.compile(r'src="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
+            picURL = str(pattern.search(response.text).group(0)).replace('src="','')
+        except AttributeError:
+            # 可能会出现格式为 webm 的动图
+            pattern = re.compile(r'https://raikou2.donmai.us/[0-9a-z_\-\/]{0,}.webm')
+            picURL = str(pattern.search(response.text).group(0))
     return picURL
 
 
@@ -74,7 +79,7 @@ while True:
     url = "https://danbooru.donmai.us/posts?tags=" + tag + "&page=" + str(page)
     postList = getPostList(url)
     if postList[0]=="NoMorePages!":
-        print("爬取完毕 已无更多页面，程序即将退出")
+        print("\n爬取完毕 已无更多页面，程序即将退出")
         exit(0)
     print("生成列表 " + url + "该页面共有 " + str(len(postList)) + " 张图片")
     
@@ -87,8 +92,9 @@ while True:
         print("下载完毕 " + downloadURL)
     
     # 当前页面爬取完毕，开始准备爬取下一页
-    print("\n切换页面 当前页面爬取完毕，开始爬取第" + str(page) + "页\n")
     page += 1
+    print("\n切换页面 当前页面爬取完毕，开始爬取第" + str(page) + "页\n")
+    
 
 
 
