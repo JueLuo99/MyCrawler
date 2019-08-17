@@ -7,8 +7,15 @@ import time
 downloadPath = os.path.abspath(os.path.dirname(__file__))
 downloadPath += os.path.sep + time.strftime("%Y%m%d", time.localtime())
 
-# 需要爬取的图片的 tag
-tag = "sayori"
+# 需要爬取的图片的 tag ， 默认为空
+tag = ""
+print("请输入想要爬取的 tag （不输入将会爬取全站）：")
+tag = input()
+if tag:
+    tag = "tags=" + tag + "&"
+print("\n准备就绪！")
+os.system("pause")
+
 
 def getPicURL(url):
     """
@@ -38,6 +45,7 @@ def getPicURL(url):
         picURL = str(pattern.search(response.text).group(0))
         return picURL
     print("无法匹配图片下载链接")
+    os.system("pause")
     raise Exception
 
 
@@ -85,12 +93,13 @@ page = 1
 
 while True:
     # 构造目标网址，准备开始爬取
-    url = "https://danbooru.donmai.us/posts?tags=" + tag + "&page=" + str(page)
+    url = "https://danbooru.donmai.us/posts?" + tag + "page=" + str(page)
+    print("生成列表 " + url)
     postList = getPostList(url)
     if postList[0]=="NoMorePages!":
         print("\n爬取完毕 已无更多页面，程序即将退出")
         exit(0)
-    print("生成列表 " + url + "该页面共有 " + str(len(postList)) + " 张图片")
+    print("生成列表 " + "该页面共有 " + str(len(postList)) + " 张图片")
     
     # 开始爬取并下载图片
     for post in postList:
