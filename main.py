@@ -17,19 +17,28 @@ def getPicURL(url):
     # 访问图片的详情页
     response = requests.get(url)
     # 匹配出原图的下载链接
-    try:
-        pattern = re.compile(r'<a id="image-resize-link" href="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
+    pattern = re.compile(r'<a id="image-resize-link" href="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
+    if (pattern.search(response.text)):
         picURL = str(pattern.search(response.text).group(0)).replace('<a id="image-resize-link" href="','')
-    except AttributeError:
-        try:
-            # 部分图片体积不大，没有预览图，当前页面即为原图
-            pattern = re.compile(r'src="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
-            picURL = str(pattern.search(response.text).group(0)).replace('src="','')
-        except AttributeError:
-            # 可能会出现格式为 webm 或 gif 甚至是 png 格式的动图（其他格式的也可能走这个域名）
-            pattern = re.compile(r'https://raikou2.donmai.us/[0-9a-z_\-\/]{0,}.(webm|gif|png|jpg|jpeg|png|bmp)')
-            picURL = str(pattern.search(response.text).group(0))
-    return picURL
+        return picURL
+    # 部分图片体积不大，没有预览图，当前页面即为原图
+    pattern = re.compile(r'src="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
+    if (pattern.search(response.text)):
+        picURL = str(pattern.search(response.text).group(0)).replace('src="','')
+        return picURL   
+    # 可能会出现格式为 webm 或 gif 甚至是 png 格式的动图（其他格式的也可能走这个域名）
+    # 惊了，竟然还有 swf
+    pattern = re.compile(r'https://raikou2.donmai.us/[0-9a-z_\-\/]{0,}.(webm|gif|png|jpg|jpeg|png|bmp|swf)')
+    if (pattern.search(response.text)):
+        picURL = str(pattern.search(response.text).group(0))
+        return picURL
+    # 还有这个域名
+    pattern = re.compile(r'https://raikou1.donmai.us/[0-9a-z_\-\/]{0,}.(webm|gif|png|jpg|jpeg|png|bmp|swf)')
+    if (pattern.search(response.text)):
+        picURL = str(pattern.search(response.text).group(0))
+        return picURL
+    print("无法匹配图片下载链接")
+    raise Exception
 
 
 
@@ -95,7 +104,3 @@ while True:
     page += 1
     print("\n切换页面 当前页面爬取完毕，开始爬取第" + str(page) + "页\n")
     
-
-
-
-
