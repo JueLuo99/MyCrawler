@@ -26,8 +26,8 @@ def getPicURL(url):
             pattern = re.compile(r'src="https://danbooru.donmai.us/data/[0-9a-z_\-]{0,}.(jpg|jpeg|png|bmp|gif)')
             picURL = str(pattern.search(response.text).group(0)).replace('src="','')
         except AttributeError:
-            # 可能会出现格式为 webm 的动图
-            pattern = re.compile(r'https://raikou2.donmai.us/[0-9a-z_\-\/]{0,}.webm')
+            # 可能会出现格式为 webm 或 gif 甚至是 png 格式的动图（其他格式的也可能走这个域名）
+            pattern = re.compile(r'https://raikou2.donmai.us/[0-9a-z_\-\/]{0,}.(webm|gif|png|jpg|jpeg|png|bmp)')
             picURL = str(pattern.search(response.text).group(0))
     return picURL
 
