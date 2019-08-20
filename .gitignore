@@ -1,5 +1,6 @@
 test.py
-main.spec
+*.spec
 dist/
 build/
 __pycache__/
+*.ico
