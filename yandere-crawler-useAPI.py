@@ -48,6 +48,11 @@ while True:
    
     json = response.json()
 
+    if len(json)==0:
+        print("爬取完毕 已无更多页面，程序即将退出")
+        os.system("pause")
+        exit(0)
+
     print("获取列表 " + "该页面共有 " + str(len(json)) + " 张图片")
 
     # 开始爬取并下载图片
