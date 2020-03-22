@@ -44,6 +44,11 @@ def getPicURL(url):
     if (pattern.search(response.text)):
         picURL = str(pattern.search(response.text).group(0))
         return picURL
+    # 还有这个域名
+    pattern = re.compile(r'https://cdn.donmai.us/original/[0-9a-z_\-\/]{0,}.(webm|gif|png|jpg|jpeg|png|bmp|swf)')
+    if (pattern.search(response.text)):
+        picURL = str(pattern.search(response.text).group(0))
+        return picURL
     print("无法匹配图片下载链接")
     os.system("pause")
     raise Exception
