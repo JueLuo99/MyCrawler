@@ -60,6 +60,10 @@ def downloadPic(url):
     保存目标图片
     """
     fileName = os.path.split(url)[1]
+    # 如果已经存在就跳过
+    if os.path.exists(downloadPath+os.path.sep+fileName):
+        print("文件重复")
+        return
     with open(downloadPath+os.path.sep+fileName, 'wb') as file:
         file.write(requests.get(url).content)
 
